@@ -50,47 +50,42 @@
  */
 class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
-        if (head == null || k == 1) return head;
+        if (head == null) return null;
+        if (k == 0) return head;
+        ListNode dummyHead = new ListNode(-1);
+        dummyHead.next = head;
+        ListNode slow = dummyHead;
+        ListNode fast = dummyHead;
 
-        ListNode prev = null;
-        ListNode curr = head;
-        ListNode temp = null;
-
-        ListNode con, tail;
-
-        int firstPass = 0;
-
-        while (curr != null) {
-            int counter = k;
-            tail = curr;
-            while (counter > 0 && curr != null) {
-                counter--;
-                temp = curr.next;
-                curr.next = prev;
-                prev = curr;
-                curr = temp;
+        while (fast != null) {
+            for (int i = 0; i < k; i++) {
+                fast = fast.next;
+                if (fast == null) return dummyHead.next;
             }
-            if (counter > 0) {
-                int recount = k-counter;
-                curr = prev;
-                prev = null;
-                while (recount > 0) {
-                    recount--;
-                    temp = curr.next;
-                    curr.next = prev;
-                    prev = curr;
-                    curr = temp;
-                }
-            } else {
-                // concate
-                tail.next = prev;
-            }
-            if (firstPass == 0) {
-                firstPass++;
-                head = prev;
-            }
+
+            ListNode next = slow.next;
+            ListNode temp = fast.next;
+            fast.next = null;
+
+            reverse(next);
+            slow.next = fast;
+            next.next = temp;
+
+            slow = next;
+            fast = next;
         }
-        return head;
+        return dummyHead.next;
+    }
+
+    private ListNode reverse(ListNode head) {
+        ListNode dummyHead = new ListNode(-1);
+        while (head != null) {
+            ListNode next = dummyHead.next;
+            dummyHead.next = head;
+            head = head.next;
+            dummyHead.next.next = next;
+        }
+        return dummyHead.next;
     }
 }
 
